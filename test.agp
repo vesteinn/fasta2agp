@@ -1,5 +1,5 @@
-LG0	1	171	1	D	component0	1	171	+
-LG0	172	194	2	N	23	scaffold	yes	paired-ends
-LG0	195	361	3	D	component2	1	361	+
-LG0	362	383	4	N	22	scaffold	yes	paired-ends
-LG0	384	646	5	D	component4	1	646	+
+LG1	1	171	1	D	component1	1	171	+
+LG1	172	194	2	N	23	scaffold	yes	paired-ends
+LG1	195	361	3	D	component3	1	361	+
+LG1	362	383	4	N	22	scaffold	yes	paired-ends
+LG1	384	646	5	D	component5	1	646	+

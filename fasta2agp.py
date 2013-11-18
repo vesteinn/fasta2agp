@@ -17,7 +17,7 @@ import textwrap
 class Fasta2AGP(object):
 
     contig_counter = 0
-    scaff_name_counter = 0
+    scaff_name_counter = 1
 
     def __init__(self, fastafile, outfile):
         self.ifile = open(fastafile)
@@ -42,12 +42,11 @@ class Fasta2AGP(object):
                 # Gap to the right of the contig
                 gap = gaps[gapcounter]
                 contig_end = str(gap.start() - 1 + 1)
-                length = str(gap.start() - contig_start - 1)
             else:
                 # Contig at the end of a scaffold
                 contig_end = str(len(scaffold))
-                length = str(int(contig_end) - gaps[-1].end() - 1)
-            contig_name = settings.COMPONENT_PRE + str(i)
+            contig_name = settings.COMPONENT_PRE + str(i + 1)
+            print contig_name + " in scaffname."
             # We print the contig info
             outdata += ('\t').join([scaffname,
                                 str(contig_start),
@@ -85,9 +84,14 @@ class Fasta2AGP(object):
         while line:
             if line and line[0] == '>':
                 # New scaffold
+                print "========="
+                print "Original scaffold-name:"
+                print line[1:-1]
                 scaff_name = settings.SCAFFOLD_PRE + str(self.scaff_name_counter)
                 scaff = ''
                 line = self.ifile.readline().strip()
+                print "New name:"
+                print scaff_name
                 while line and line[0] != '>':
                     scaff += line
                     line = self.ifile.readline().strip()
