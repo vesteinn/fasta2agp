@@ -46,7 +46,7 @@ class Fasta2AGP(object):
                 # Contig at the end of a scaffold
                 contig_end = str(len(scaffold))
             contig_name = settings.COMPONENT_PRE + str(i + 1)
-            print contig_name + " in scaffname."
+            print contig_name + " in " + scaffname + "."
             # We print the contig info
             outdata += ('\t').join([scaffname,
                                 str(contig_start),
