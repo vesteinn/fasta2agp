@@ -74,7 +74,7 @@ class Fasta2AGP(object):
                                 settings.LINKAGE_EVIDENCE + '\n'])
                 gapcounter += 1
                 i += 1
-            contig_start = gap.end() + 1
+                contig_start = gap.end() + 1
             self.contig_counter +=1
         return outdata
 
