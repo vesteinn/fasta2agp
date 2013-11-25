@@ -25,7 +25,7 @@ class Fasta2AGP(object):
         self.agpfile = open(outfile + '.agp', 'w')
 
     def scaffold2parts(self, scaffname, scaffold):
-        min_n_string = "n" * settings.MIN_N + '*'
+        min_n_string = "n"*(settings.MIN_N+1)+ '*'
         lower_scaff = scaffold.lower()
         contigs = re.split(min_n_string, lower_scaff)
         gaps = list(re.finditer(min_n_string, lower_scaff))
@@ -34,6 +34,8 @@ class Fasta2AGP(object):
         i = 0
         gapcounter = 0
         contcounter = 0
+        # used with U gaps
+        scaff_pos = 0
         totalgaps = len(gaps)
         print str(totalgaps) + " gaps found in scaffold " + scaffname
         components = len(contigs) + len(gaps)
@@ -41,11 +43,21 @@ class Fasta2AGP(object):
             if gapcounter <= totalgaps - 1:
                 # Gap to the right of the contig
                 gap = gaps[gapcounter]
-                contig_end = str(gap.start() - 1 + 1)
+                if settings.GAP_TYPE == 'U':
+                    if not scaff_pos:
+                        scaff_pos = gap.start() - 1
+                    else:
+                        scaff_pos = scaff_pos + len(contigs[contcounter])
+                    contig_end = str(scaff_pos)
+                else:
+                    contig_end = str(gap.start() - 1 + 1)
             else:
                 # Contig at the end of a scaffold
-                contig_end = str(len(scaffold))
-            contig_name = settings.COMPONENT_PRE + str(i + 1)
+                if settings.GAP_TYPE == 'U':
+                    contig_end = str(scaff_pos + len(contigs[contcounter]))
+                else:
+                    contig_end = str(len(scaffold))
+            contig_name = settings.COMPONENT_PRE + str(self.contig_counter)
             print contig_name + " in " + scaffname + "."
             # We print the contig info
             outdata += ('\t').join([scaffname,
@@ -63,7 +75,19 @@ class Fasta2AGP(object):
             contcounter += 1
             if gapcounter <= totalgaps - 1:
                 # We have a gap to print
-                outdata += ('\t').join([scaffname,
+                if settings.GAP_TYPE == 'U':
+                    outdata += ('\t').join([scaffname,
+                                str(scaff_pos + 1),
+                                str(scaff_pos + 100),
+                                str(i + 1),
+                                settings.GAP_TYPE,
+                                "100",
+                                'scaffold',
+                                'yes',
+                                settings.LINKAGE_EVIDENCE + '\n'])
+                    contig_start = str(scaff_pos + 101)
+                else:
+                    outdata += ('\t').join([scaffname,
                                 str(gap.start() + 1),
                                 str(gap.end()),
                                 str(i + 1),
@@ -72,9 +96,9 @@ class Fasta2AGP(object):
                                 'scaffold',
                                 'yes',
                                 settings.LINKAGE_EVIDENCE + '\n'])
+                    contig_start = gap.end() + 1
                 gapcounter += 1
                 i += 1
-                contig_start = gap.end() + 1
             self.contig_counter +=1
         return outdata
 
